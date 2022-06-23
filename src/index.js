@@ -40,10 +40,17 @@ axios.post(url, data, {
   headers: {
       "X-Hub-Signature": signature_sha1,
       "X-Hub-Signature-256": signature_sha256,
-    "X-Hub-SHA": process.env.GITHUB_SHA
-  }
-}).then(function () {
-  core.info(`Webhook sent sucessfully`)
-}).catch(function (error) {
-  core.setFailed(`Request failed with status code ${error.response.status}`);
-});
+      "X-Hub-SHA": process.env.GITHUB_SHA,
+    },
+  })
+  .then(() => {
+    core.info(`Webhook sent sucessfully`);
+  })
+  .catch((error) => {
+    if (error.response == undefined || error.response.status == undefined)
+      core.setFailed(error);
+    else
+      core.setFailed(
+        `Request failed with status code ${error.response.status}`
+      );
+  });
