@@ -15,5 +15,6 @@ jobs:
         uses: ./
         with:
           url: 'https://postman-echo.com/post'
+          timeout: 2000
           hmacSecret: '9aa66a8c37255ae2b71d82b1e4bffdb1'
           data: '{ "key": "value" }'
