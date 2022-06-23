@@ -12,12 +12,12 @@ if (hmacSecret.length < 32) {
   return;
 }
 
-const createHmacSignature = body => {
-  const hmac = crypto.createHmac("sha256", hmacSecret);
+const createHmacSignature = (body, sha = "sha256") => {
+  const hmac = crypto.createHmac(sha, hmacSecret);
   if (body === "") {
-    return hmac.digest("hex");
+    return sha + "=" + hmac.digest("hex");
   } else {
-    return hmac.update(JSON.stringify(body)).digest("hex");
+    return sha + "=" + hmac.update(JSON.stringify(body)).digest("hex");
   }
 };
 
@@ -33,12 +33,13 @@ function isJsonString(str) {
 const url = core.getInput('url');
 const dataInput = core.getInput('data');
 const data = isJsonString(dataInput) ? JSON.parse(dataInput) : dataInput;
-const signature = createHmacSignature(data);
+const signature_sha1 = createHmacSignature(data, "sha1");
+const signature_sha256 = createHmacSignature(data, "sha256");
 
 axios.post(url, data, {
   headers: {
-    "X-Hub-Signature": signature,
-    "X-Hub-Signature-256": "sha256=" + signature,
+      "X-Hub-Signature": signature_sha1,
+      "X-Hub-Signature-256": signature_sha256,
     "X-Hub-SHA": process.env.GITHUB_SHA
   }
 }).then(function () {
