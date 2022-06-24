@@ -7,6 +7,9 @@ inputs:
   url:
     description: 'Request URL'
     required: true
+  timeout:
+      description: 'Webhook Response Timeout'
+      required: false
   hmacSecret:
     description: 'HMAC Secret'
     required: true

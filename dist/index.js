@@ -2980,18 +2980,19 @@ function isJsonString(str) {
 }
 
 const url = core.getInput("url");
-const timeout = parseInt(core.getInput("timeout"));
+const timeoutInput = core.getInput("timeout");
+const timeout = parseInt(timeoutInput ? timeoutInput : "0");
 const dataInput = core.getInput("data");
 const data = isJsonString(dataInput) ? JSON.parse(dataInput) : dataInput;
-const signature_sha1 = createHmacSignature(data, "sha1");
-const signature_sha256 = createHmacSignature(data, "sha256");
+const signatureSha1 = createHmacSignature(data, "sha1");
+const signatureSha256 = createHmacSignature(data, "sha256");
 
 axios
   .post(url, data, {
     timeout: timeout,
     headers: {
-      "X-Hub-Signature": signature_sha1,
-      "X-Hub-Signature-256": signature_sha256,
+      "X-Hub-Signature": signatureSha1,
+      "X-Hub-Signature-256": signatureSha256,
       "X-Hub-SHA": process.env.GITHUB_SHA,
     },
   })
