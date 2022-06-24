@@ -44,5 +44,3 @@ Verify it on your endpoint for integrity.
 ## Credit
 
 - Thanks to <https://github.com/koraykoska/secure-actions-webhook> for providing the base signature generation code.
-
-- Thanks to <https://github.com/navied/secure-webhook> for providing simple implementation.
