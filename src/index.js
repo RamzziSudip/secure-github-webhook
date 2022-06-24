@@ -1,23 +1,27 @@
 const axios = require("axios");
 const crypto = require("crypto");
-const core = require('@actions/core');
-const hmacSecret = core.getInput('hmacSecret');
+const core = require("@actions/core");
+const hmacSecret = core.getInput("hmacSecret");
 
 if (!hmacSecret || hmacSecret === "" || hmacSecret.trim() === "") {
-  core.setFailed("The hmac secret seems empty. This doesn't seem like what you want.");
+  core.setFailed(
+    "The hmac secret seems empty. This doesn't seem like what you want."
+  );
   return;
 }
 if (hmacSecret.length < 32) {
-  core.setFailed("The hmac secret seems week. You should use at least 32 secure random hex chars.");
+  core.setFailed(
+    "The hmac secret seems week. You should use at least 32 secure random hex chars."
+  );
   return;
 }
 
-const createHmacSignature = body => {
-  const hmac = crypto.createHmac("sha256", hmacSecret);
+const createHmacSignature = (body, sha = "sha256") => {
+  const hmac = crypto.createHmac(sha, hmacSecret);
   if (body === "") {
-    return hmac.digest("hex");
+    return sha + "=" + hmac.digest("hex");
   } else {
-    return hmac.update(JSON.stringify(body)).digest("hex");
+    return sha + "=" + hmac.update(JSON.stringify(body)).digest("hex");
   }
 };
 
@@ -30,19 +34,31 @@ function isJsonString(str) {
   }
 }
 
-const url = core.getInput('url');
-const dataInput = core.getInput('data');
+const url = core.getInput("url");
+const timeoutInput = core.getInput("timeout");
+const timeout = parseInt(timeoutInput ? timeoutInput : "0");
+const dataInput = core.getInput("data");
 const data = isJsonString(dataInput) ? JSON.parse(dataInput) : dataInput;
-const signature = createHmacSignature(data);
+const signatureSha1 = createHmacSignature(data, "sha1");
+const signatureSha256 = createHmacSignature(data, "sha256");
 
-axios.post(url, data, {
-  headers: {
-    "X-Hub-Signature": signature,
-    "X-Hub-Signature-256": "sha256=" + signature,
-    "X-Hub-SHA": process.env.GITHUB_SHA
-  }
-}).then(function () {
-  core.info(`Webhook sent sucessfully`)
-}).catch(function (error) {
-  core.setFailed(`Request failed with status code ${error.response.status}`);
-});
+axios
+  .post(url, data, {
+    timeout: timeout,
+    headers: {
+      "X-Hub-Signature": signatureSha1,
+      "X-Hub-Signature-256": signatureSha256,
+      "X-Hub-SHA": process.env.GITHUB_SHA,
+    },
+  })
+  .then(() => {
+    core.info(`Webhook sent sucessfully`);
+  })
+  .catch((error) => {
+    if (error.response == undefined || error.response.status == undefined)
+      core.setFailed(error);
+    else
+      core.setFailed(
+        `Request failed with status code ${error.response.status}`
+      );
+  });
