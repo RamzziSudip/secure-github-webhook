@@ -1,8 +1,9 @@
-name: 'Secure Webhook'
-description: 'Send a SHA256 digest with webhook request'
+name: 'Secure Github Webhook'
+description: 'Send a SHA256 and SHA1 digest with webhook request'
 branding:
-  icon: 'alert-octagon'  
+  icon: 'wifi'  
   color: 'green'
+
 inputs:
   url:
     description: 'Request URL'

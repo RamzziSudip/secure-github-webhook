@@ -8,7 +8,7 @@ Sending a json string, ``url`` and  ``hmacSecret`` are required fields. ``data``
 
 ```yaml
 - name: Webhook
-  uses: navied/secure-actions-webhook@0.2.0
+  uses: ramzzisudip/secure-github-webhook@0.3.0
   with:
     url: https://example.com
     data: '{ "example": "data" }'

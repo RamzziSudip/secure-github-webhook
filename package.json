@@ -1,5 +1,5 @@
 {
-  "name": "secure-webhook",
+  "name": "secure-github-webhook",
   "version": "0.3.0",
   "description": "Github Actions secure webhook",
   "main": "src/index.js",
