@@ -8,7 +8,7 @@
     "build": "ncc build src/index.js -o dist"
   },
   "dependencies": {
-    "@vercel/ncc": "^0.24.1",
+    "@vercel/ncc": "^0.34.0",
     "axios": "^0.21.3"
   },
   "devDependencies": {
